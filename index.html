@@ -166,9 +166,10 @@
   body.menu-open .burger span:nth-child(2){ opacity:0; }
   body.menu-open .burger span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
   .mobile-menu{
-    position:fixed; inset:0; z-index:120; background:var(--wine); color:var(--sand);
+    position:fixed; top:calc(var(--banner-h) + var(--nav-h)); left:0; right:0; bottom:0;
+    z-index:120; background:var(--wine); color:var(--sand);
     display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
-    padding:0 40px; gap:6px;
+    padding:0 40px; gap:6px; overflow-y:auto;
     clip-path:circle(0% at calc(100% - 44px) 44px);
     transition:clip-path .6s cubic-bezier(.7,0,.3,1);
     pointer-events:none;
