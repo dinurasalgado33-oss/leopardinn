@@ -1080,6 +1080,31 @@
       });
     }, { threshold:0.15, rootMargin:'0px 0px -60px 0px' });
     revealEls.forEach(function(el){ io.observe(el); });
+
+    // Safety net. A fast scroll (wheel burst, dragged scrollbar, End key) or a
+    // scroll position restored on reload can carry an element past the observer
+    // between samples, leaving it stuck at opacity 0 for good. Sweep on the same
+    // trigger line the observer uses, so timing is unchanged when both agree.
+    var sweepQueued = false;
+    function sweep(){
+      sweepQueued = false;
+      var pending = 0;
+      revealEls.forEach(function(el){
+        if (el.classList.contains('in-view')) return;
+        if (el.getBoundingClientRect().top < window.innerHeight - 60) {
+          el.classList.add('in-view');
+          io.unobserve(el);
+        } else { pending++; }
+      });
+      if (!pending) document.removeEventListener('scroll', queueSweep);
+    }
+    function queueSweep(){
+      if (sweepQueued) return;
+      sweepQueued = true;
+      requestAnimationFrame(sweep);
+    }
+    document.addEventListener('scroll', queueSweep, { passive:true });
+    window.addEventListener('load', queueSweep);
   } else {
     revealEls.forEach(function(el){ el.classList.add('in-view'); });
   }
