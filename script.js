@@ -176,6 +176,7 @@
   }
 
   /* ---------- lightbox ---------- */
+  if (document.getElementById('lightbox')) {
   var lbImages = Array.prototype.slice.call(document.querySelectorAll('[data-lb]'));
   var lightbox = document.getElementById('lightbox');
   var lbImage = document.getElementById('lbImage');
@@ -211,6 +212,7 @@
     if (e.key === 'ArrowRight') openLb(lbIndex + 1);
     if (e.key === 'ArrowLeft') openLb(lbIndex - 1);
   });
+  }
 
   /* ---------- hero cursor spotlight ---------- */
   var heroGlow = document.getElementById('heroGlow');
@@ -241,10 +243,12 @@
   }
 
   /* ---------- lightbox zoom on click ---------- */
+  if (document.getElementById('lbImage')) {
   lbImage.addEventListener('click', function(e){
     e.stopPropagation();
     this.classList.toggle('zoomed');
   });
+  }
 
   /* ---------- enquiry builder ---------- */
   if (document.getElementById('enquirePreview')) {
