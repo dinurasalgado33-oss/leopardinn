@@ -1,1 +1,7 @@
 .claude/
+
+# Internal tooling — not part of the deployed site
+social-studio.html
+
+# Staging folder for logo uploads; the canonical copies live in images/logos/
+lp logos/
