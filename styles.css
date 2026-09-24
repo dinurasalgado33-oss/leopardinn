@@ -823,3 +823,98 @@
     .navlinks a{ font-size:var(--fs-sm); }
     .nav-cta{ padding-left:16px; padding-right:16px; font-size:var(--fs-sm); }
   }
+
+
+  /* ───────────────────────────── MOBILE EXPERIENCE ─────────────────────────
+     Measured on a 375x812 viewport: the page ran 10,138px (12.5 screens)
+     because desktop's 120px section padding was being applied on a phone;
+     the hero used 100vh, which on iOS and Android is taller than the visible
+     area while the URL bar is showing, so the hero crops and the page jumps
+     as the bar hides; and 23 controls were under the 44px minimum tap size. */
+
+  @media (max-width:640px){
+    /* 1. reclaim the scroll. 120px of air either side of every section is a
+       desktop measure — on a phone it is most of a screen of nothing. */
+    section{ padding:64px 0; }
+    .intro{ padding:56px 0 40px; }
+    .strip{ padding:0 0 64px; }
+    footer{ padding:56px 0 32px; }
+    .section-head{ margin-bottom:32px; }
+
+    /* 2. dvh tracks the visible viewport as the URL bar shows and hides.
+       The vh line stays first as the fallback for older browsers. */
+    .hero{ min-height:100vh; min-height:100dvh; }
+    .guide-hero{ min-height:72vh; min-height:68dvh; }
+
+    /* 3. 44px minimum on anything you tap */
+    .chip{ min-height:44px; display:inline-flex; align-items:center; }
+    .stepper button{ width:44px; height:44px; }
+    .mm-close{ min-height:44px; }
+    .branch-cta, .enquire-send, .wa-btn, .hero-branches a, .nav-cta{ min-height:44px; }
+    /* inline text links were 20px tall — give them a real target
+       without changing how they look */
+    .branch-copy a:not(.branch-cta),
+    .article-cta a,
+    .foot-col a{
+      display:inline-block; padding-block:11px;
+    }
+
+    /* 4. the hero eyebrow was wrapping to two lines above the headline */
+    .hero .eyebrow{ font-size:11px; letter-spacing:0.12em; }
+
+    /* 5. the floating WhatsApp button sat on top of the scroll cue */
+    .scroll-cue{ display:none; }
+  }
+
+  /* very narrow phones */
+  @media (max-width:380px){
+    .wrap{ padding:0 20px; }
+    .hero-branches{ gap:10px; }
+  }
+
+  @media (max-width:520px){
+    /* The four experience tiles were stacking one-per-row with square images,
+       making this one section 2.7 screens tall on a phone. Two compact
+       columns read as a nav strip, which is what it is. */
+    .exp-strip{ grid-template-columns:repeat(2,1fr); gap:16px; }
+    .exp-tile img{ aspect-ratio:4/3; }
+    .exp-tile h4{ margin-top:10px; font-size:var(--fs-md); }
+    .exp-tile p{ font-size:var(--fs-sm); }
+
+    /* the footer ran 1.7 screens with its columns stacked */
+    .foot-grid{ gap:28px; }
+    footer h2{ margin-bottom:4px; }
+  }
+
+  @media (max-width:640px){
+    /* carousel arrows were 42px, just under the 44px minimum */
+    #stripPrev, #stripNext{ width:44px; height:44px; }
+
+    /* the two branch columns are short lists — side by side saves most of a
+       screen, and the headline block still spans the full width above them */
+    .foot-grid{ grid-template-columns:1fr 1fr; gap:26px 18px; }
+    .foot-grid > :first-child{ grid-column:1 / -1; }
+    .foot-col a, .foot-social a{ display:inline-block; padding-block:11px; }
+  }
+
+  @media (max-width:640px){
+    /* experiences.html: the card CTAs and guide links were 19-20px tall */
+    .exp-card .exp-card-cta,
+    .article-cta a,
+    .exp-copy a,
+    .handled a{
+      display:inline-block; padding-block:13px;
+    }
+
+    /* each experience section ran 3.6 screens with three tall cards stacked.
+       A 4:5 portrait lead image is a lot of phone; 3:2 is plenty. */
+    .exp-visual img{ aspect-ratio:3/2; }
+    .exp-card img{ aspect-ratio:16/9; }
+    .exp-card-body{ padding:18px; }
+    .exp-grid{ gap:18px; margin-top:32px; }
+  }
+
+  @media (max-width:640px){
+    /* the remaining bare inline link, in the excursions copy on branch pages */
+    .excursions .wrap p > a{ display:inline-block; padding-block:12px; }
+  }
