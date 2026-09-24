@@ -139,16 +139,6 @@
     transition:color .45s var(--ease-out);
   }
   nav.nav-solid .brand{ color:var(--ink); }
-  .brand .mark-ring{
-    width:52px; height:52px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    background:var(--wine);
-    box-shadow:0 4px 14px rgba(36,26,18,0.3), 0 0 0 1px rgba(201,162,78,0.35);
-    flex-shrink:0; overflow:hidden;
-    transition:transform .4s var(--ease-hover);
-  }
-  .brand:hover .mark-ring{ transform:rotate(-6deg) scale(1.06); }
-  .brand .mark-ring img{ width:120%; height:120%; object-fit:cover; object-position:center 42%; }
   .brand-text{display:flex; flex-direction:column; line-height:1.05;}
   .brand-text .sub{
     font-family:'Karla',sans-serif; font-weight:600; font-size:var(--fs-2xs);
