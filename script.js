@@ -275,6 +275,30 @@
       .split('\n')
       .map(function(line, i){ return i === 0 ? '<strong>' + line + '</strong>' : line; })
       .join('<br>');
+    showVilla();
+  }
+
+  // the chosen villa's photo, and the card takes that photo's colour: the same
+  // colour its villa card uses on this page (read from that card, so the two
+  // never drift apart). "Not sure yet" shows both villas side by side.
+  var enquireCard = document.querySelector('.enquire-card');
+  var enquirePhoto = document.querySelector('.enquire-photo');
+  var shownVilla = null;
+  function villaTint(branch){
+    var btn = document.querySelector('.trip-reserve[data-enquire-branch="' + branch + '"]');
+    var card = btn && btn.closest('.trip-card');
+    var img = card && card.querySelector('.trip-img');
+    return img ? img.getAttribute('data-tint') : null;
+  }
+  function showVilla(){
+    if (!enquirePhoto || state.branch === shownVilla) return;
+    shownVilla = state.branch;
+    var tint = villaTint(state.branch);
+    enquirePhoto.classList.toggle('either', !tint);
+    enquirePhoto.querySelectorAll('img').forEach(function(img){
+      img.classList.toggle('on', !tint || img.getAttribute('data-branch') === state.branch);
+    });
+    enquireCard.style.setProperty('--tint', 'rgb(' + (tint || '89, 80, 54') + ')');
   }
 
   document.getElementById('branchChips').addEventListener('click', function(e){
@@ -325,6 +349,32 @@
   document.getElementById('checkin').min = todayStr;
   document.getElementById('checkout').min = todayStr;
   renderPreview();
+
+  // the date pills: show the chosen date (or "Add date"); a click opens the picker
+  var datePills = document.querySelectorAll('.date-pill');
+  function pillDate(v){
+    if (!v) return null;
+    var d = new Date(v + 'T00:00:00');
+    if (isNaN(d)) return null;
+    return d.toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short' });
+  }
+  function showDates(){
+    // both at once: picking a check-in can clear an earlier check-out
+    datePills.forEach(function(pill){
+      var shown = pillDate(pill.querySelector('input').value);
+      pill.querySelector('.date-pill-text').textContent = shown || 'Add date';
+      pill.classList.toggle('has-date', !!shown);
+    });
+  }
+  datePills.forEach(function(pill){
+    var input = pill.querySelector('input');
+    input.addEventListener('change', showDates);
+    input.addEventListener('input', showDates);
+    input.addEventListener('click', function(){
+      if (input.showPicker) { try { input.showPicker(); } catch (err) {} }
+    });
+  });
+  showDates();
 
   // jump-to-enquiry buttons
   function jumpToEnquiry(branch){
