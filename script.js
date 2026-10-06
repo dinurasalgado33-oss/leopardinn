@@ -111,69 +111,68 @@
     });
   }, { passive:true });
 
-  /* ---------- pinned horizontal gallery (desktop) ---------- */
-  if (document.getElementById('hscroll') && document.getElementById('stripTrack')) {
-  var hs = document.getElementById('hscroll');
-  var hsTrack = document.getElementById('stripTrack');
-  var hsBar = document.getElementById('hscrollBar');
-  var pinned = false;
-  var hsDist = 0;
-
-  function hsDistance(){
-    return Math.max(0, hsTrack.scrollWidth - window.innerWidth + 60);
-  }
-  function setupPin(){
-    var shouldPin = window.innerWidth > 900 && !reduceMotion;
-    if (shouldPin !== pinned) {
-      if (!shouldPin) { hsTrack.style.transform = ''; hs.style.height = ''; }
+  /* ---------- pinned horizontal galleries (desktop) ---------- */
+  // Every .hscroll gallery pins while you scroll past it, and its photos slide
+  // across with the page scroll. Phones, tablets and reduced motion swipe instead.
+  function galleryPinned(){ return window.innerWidth > 900 && !reduceMotion; }
+  Array.prototype.forEach.call(document.querySelectorAll('.hscroll'), function(hs){
+    var hsTrack = hs.querySelector('.strip-track');
+    if (!hsTrack) return;
+    var hsBar = hs.querySelector('.hscroll-progress span');
+    var pinned = false;
+    var hsDist = 0;
+    function setupPin(){
+      pinned = galleryPinned();
+      if (!pinned) { hs.style.height = ''; hsTrack.style.transform = ''; return; }
+      hsDist = Math.max(0, hsTrack.scrollWidth - window.innerWidth + 60);
+      hs.style.height = (window.innerHeight + hsDist) + 'px';
+      updatePin();
     }
-    pinned = shouldPin;
-    if (!pinned) { hs.style.height = ''; hsTrack.style.transform = ''; return; }
-    hsDist = hsDistance();
-    hs.style.height = (window.innerHeight + hsDist) + 'px';
-    updatePin();
-  }
-  function updatePin(){
-    if (!pinned) return;
-    var total = hs.offsetHeight - window.innerHeight;
-    var p = total > 0 ? Math.min(1, Math.max(0, -hs.getBoundingClientRect().top / total)) : 0;
-    hsTrack.style.transform = 'translateX(' + (-p * hsDist) + 'px)';
-    if (hsBar) hsBar.style.width = (p * 100) + '%';
-  }
-  document.addEventListener('scroll', updatePin, { passive:true });
-  window.addEventListener('resize', setupPin);
-  window.addEventListener('load', setupPin);
-  setupPin();
-  }
+    function updatePin(){
+      if (!pinned) return;
+      var total = hs.offsetHeight - window.innerHeight;
+      var p = total > 0 ? Math.min(1, Math.max(0, -hs.getBoundingClientRect().top / total)) : 0;
+      hsTrack.style.transform = 'translateX(' + (-p * hsDist) + 'px)';
+      if (hsBar) hsBar.style.width = (p * 100) + '%';
+    }
+    document.addEventListener('scroll', updatePin, { passive:true });
+    window.addEventListener('resize', setupPin);
+    window.addEventListener('load', setupPin);
+    setupPin();
+  });
 
-  /* ---------- gallery: arrows + drag to scroll ---------- */
-  if (document.getElementById('stripTrack') && document.getElementById('stripNext')) {
-  var track = document.getElementById('stripTrack');
-  document.getElementById('stripNext').addEventListener('click', function(){
-    track.scrollBy({ left: track.clientWidth * 0.7, behavior:'smooth' });
+  /* ---------- galleries: arrows + drag to scroll ---------- */
+  var moved = 0;  // the lightbox ignores a click that was really a drag
+  Array.prototype.forEach.call(document.querySelectorAll('.strip'), function(strip){
+    var track = strip.querySelector('.strip-track');
+    var next = strip.querySelector('.strip-next');
+    var prev = strip.querySelector('.strip-prev');
+    if (!track || !next || !prev) return;
+    next.addEventListener('click', function(){
+      track.scrollBy({ left: track.clientWidth * 0.7, behavior:'smooth' });
+    });
+    prev.addEventListener('click', function(){
+      track.scrollBy({ left: -track.clientWidth * 0.7, behavior:'smooth' });
+    });
+    var isDown = false, startX = 0, startScroll = 0;
+    track.addEventListener('pointerdown', function(e){
+      if (strip.classList.contains('hscroll') && galleryPinned()) return;
+      isDown = true; moved = 0;
+      startX = e.clientX; startScroll = track.scrollLeft;
+      track.classList.add('dragging');
+    });
+    window.addEventListener('pointermove', function(e){
+      if (!isDown) return;
+      var dx = e.clientX - startX;
+      moved = Math.abs(dx);
+      track.scrollLeft = startScroll - dx;
+    });
+    window.addEventListener('pointerup', function(){
+      if (!isDown) return;
+      isDown = false;
+      track.classList.remove('dragging');
+    });
   });
-  document.getElementById('stripPrev').addEventListener('click', function(){
-    track.scrollBy({ left: -track.clientWidth * 0.7, behavior:'smooth' });
-  });
-  var isDown = false, startX = 0, startScroll = 0, moved = 0;
-  track.addEventListener('pointerdown', function(e){
-    if (pinned) return;
-    isDown = true; moved = 0;
-    startX = e.clientX; startScroll = track.scrollLeft;
-    track.classList.add('dragging');
-  });
-  window.addEventListener('pointermove', function(e){
-    if (!isDown) return;
-    var dx = e.clientX - startX;
-    moved = Math.abs(dx);
-    track.scrollLeft = startScroll - dx;
-  });
-  window.addEventListener('pointerup', function(){
-    if (!isDown) return;
-    isDown = false;
-    track.classList.remove('dragging');
-  });
-  }
 
   /* ---------- lightbox ---------- */
   if (document.getElementById('lightbox')) {

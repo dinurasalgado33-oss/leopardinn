@@ -451,6 +451,25 @@
   }
   .branch-copy h3{font-size:var(--fs-h2);}
   .branch-copy p{margin-top:16px; color:var(--bark); max-width:48ch;}
+  /* homepage villa sections: one column, the villa photos between the heading and
+     the text. The photos keep their size and overlap; the gap below them leaves room
+     for the small photo that hangs off the bottom corner. */
+  .branch-grid-stack{ display:block; max-width:760px; }
+  .branch-copy .branch-visual{ max-width:480px; margin:28px 0 72px; }
+  @media (max-width:900px){ .branch-copy .branch-visual{ margin:24px 0 48px; } }
+  /* desktop: the title runs across the top, then the photos on the left with the
+     text beside them, so the section uses the width instead of half of it */
+  @media (min-width:901px){
+    .branch-grid-stack{ max-width:none; }
+    .branch-grid-stack .branch-copy{
+      display:grid; grid-template-columns:minmax(0, 480px) minmax(0, 1fr);
+      column-gap:88px; align-items:center;
+    }
+    .branch-grid-stack .branch-copy > .branch-seal,
+    .branch-grid-stack .branch-copy > .branch-tag,
+    .branch-grid-stack .branch-copy > h3{ grid-column:1 / -1; justify-self:start; }
+    .branch-grid-stack .branch-copy .branch-visual{ width:100%; margin:28px 0 40px; order:0; }  /* photos first in both sections */
+  }
   .amenity-list{ list-style:none; padding:0; margin:26px 0 0; display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; }
   .amenity-list li{font-size:var(--fs-base); display:flex; align-items:center; gap:8px;}
   .amenity-list li::before{content:''; width:5px; height:5px; border-radius:50%; background:var(--wine); flex-shrink:0;}
@@ -972,9 +991,6 @@
   }
 
   footer{background:var(--wine); color:var(--sand); padding:90px 0 40px; position:relative; overflow:hidden;}
-  /* when the wine experiences section runs straight into the wine footer, a hairline keeps them apart */
-  .excursions + footer{ border-top:1px solid rgba(246,238,223,0.12); padding-top:64px; }
-  @media (max-width:640px){ .excursions + footer{ padding-top:48px; } }
   footer .rosette-field{ opacity:0.05; filter:invert(1); }
   .foot-grid{display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:50px; padding-bottom:56px; border-bottom:1px solid rgba(246,238,223,0.15); position:relative; z-index:1;}
   footer h2{font-size:var(--fs-h2); color:#fff; max-width:12ch;}
@@ -1122,7 +1138,7 @@
 
   @media (max-width:640px){
     /* carousel arrows were 42px, just under the 44px minimum */
-    #stripPrev, #stripNext{ width:44px; height:44px; }
+    .strip-nav button{ width:44px; height:44px; }
 
     /* the two branch columns are short lists — side by side saves most of a
        screen, and the headline block still spans the full width above them */
@@ -1151,4 +1167,22 @@
   @media (max-width:640px){
     /* the remaining bare inline link, in the excursions copy on branch pages */
     .excursions .wrap p > a{ display:inline-block; padding-block:12px; }
+  }
+
+  /* ---------- section dividers (homepage, 2026-10-06) ----------
+     The gold dot divider sits between every section, on the colour of the section
+     above it, and a hairline marks where the next colour begins. Sections alternate
+     cream and sand, so every change of section is also a change of colour. */
+  .divider.on-sand{ background:var(--sand); }
+  .divider.on-wine{ background:var(--wine); }
+  .divider.on-wine .rule{ background:linear-gradient(90deg, transparent, rgba(246,238,223,0.22)); }
+  .divider.on-wine .rule.right{ background:linear-gradient(90deg, rgba(246,238,223,0.22), transparent); }
+  .divider + section, .divider + footer{ border-top:1px solid var(--line); }
+  .divider.on-wine + footer{ border-top-color:rgba(246,238,223,0.12); padding-top:64px; }
+  /* the galleries start with their heading, so give them room below the hairline */
+  .divider + .strip{ padding-top:64px; }
+  @media (min-width:901px){ .divider + .hscroll{ padding-top:0; } }  /* pinned gallery centres itself */
+  @media (max-width:640px){
+    .divider + .strip{ padding-top:48px; }
+    .divider.on-wine + footer{ padding-top:48px; }
   }
