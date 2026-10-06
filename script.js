@@ -345,4 +345,39 @@
   });
   document.getElementById('navCta').addEventListener('click', function(){ jumpToEnquiry(null); });
   }
+  /* ---------- villa card slideshows ---------- */
+  // Swiping is native scroll-snap (works with no JS). This keeps the dots and
+  // the tint in step with the photo on screen, and lets the dots jump to a photo.
+  if (document.querySelector('.trip-slides')) {
+    document.querySelectorAll('.trip-card').forEach(function(card){
+      var track = card.querySelector('.trip-slides');
+      var slides = track.querySelectorAll('.trip-img');
+      var dots = card.querySelectorAll('.trip-dots button');
+      var current = 0;
+      function show(i){
+        current = i;
+        dots.forEach(function(d, j){
+          d.classList.toggle('on', j === i);
+          if (j === i) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current');
+        });
+        var t = slides[i].getAttribute('data-tint');
+        if (t) card.style.setProperty('--tint', 'rgb(' + t + ')');
+      }
+      dots.forEach(function(d, j){
+        d.addEventListener('click', function(){
+          track.scrollTo({ left: j * track.clientWidth, behavior: reduceMotion ? 'auto' : 'smooth' });
+        });
+      });
+      var queued = false;
+      track.addEventListener('scroll', function(){
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(function(){
+          queued = false;
+          var i = Math.round(track.scrollLeft / track.clientWidth);
+          if (i !== current && slides[i]) show(i);
+        });
+      }, { passive:true });
+    });
+  }
 })();
