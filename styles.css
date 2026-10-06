@@ -298,6 +298,9 @@
   .section-head{max-width:640px; margin-bottom:56px;}
   .section-head h2{font-size:var(--fs-h1); margin-top:12px;}
   .section-head p{margin-top:16px; color:var(--bark); opacity:0.85;}
+  /* a quieter header: one short heading, no subtitle (homepage experiences) */
+  .section-head-compact{ margin-bottom:32px; }
+  .section-head-compact h2{ font-size:var(--fs-h3); margin-top:0; }
 
   .reveal{ opacity:0; transform:translateY(28px); transition:opacity .9s var(--ease-out), transform .9s var(--ease-out); }
   .reveal.in-view{ opacity:1; transform:translateY(0); }
@@ -784,7 +787,7 @@
     margin-top:8px; font-family:'Karla',sans-serif; font-weight:700;
     font-size:23px; line-height:1.15; letter-spacing:-0.01em; color:#fff;
   }
-  .enquire-card > p{ margin-top:9px; font-size:13px; line-height:1.45; color:rgba(255,255,255,0.82); }
+  .enquire-card .enquire-intro > p{ margin-top:9px; font-size:13px; line-height:1.45; color:rgba(255,255,255,0.82); }
 
   /* the chosen villa's photo */
   .enquire-photo{
@@ -841,6 +844,23 @@
     justify-content:center; font-size:13.5px; font-weight:600;
   }
   @media (max-width:520px){ .enquire-card{ width:86vw; max-width:340px; } }
+  .enquire-intro, .enquire-form{ min-width:0; }
+  /* tablets: one comfortable column */
+  @media (min-width:521px) and (max-width:899px){ .enquire-card{ width:100%; max-width:480px; } }
+  /* desktop: a wide card in two halves. The intro and the villa photo on the left
+     (the photo grows to fill the column), the form on the right. */
+  @media (min-width:900px){
+    .enquire-card{
+      width:100%; max-width:880px; padding:36px;
+      display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:stretch;
+    }
+    .enquire-intro{ display:flex; flex-direction:column; }
+    .enquire-card h2{ font-size:28px; }
+    .enquire-card .enquire-intro > p{ font-size:var(--fs-base); }
+    .enquire-photo{ flex:1 1 auto; height:auto; padding-bottom:0; min-height:260px; margin-top:20px; }
+    .enquire-card .enquire-villa{ margin-top:0; }
+    .enquire-card .field-row + .field-row{ grid-template-columns:auto 1fr; gap:40px; }  /* guests takes only what it needs */
+  }
   @media (max-width:640px){ .enquire-card .stepper button{ width:44px; height:44px; } }  /* 44px to tap */
 
   /* ===== FANCY LAYER ===== */
@@ -952,6 +972,9 @@
   }
 
   footer{background:var(--wine); color:var(--sand); padding:90px 0 40px; position:relative; overflow:hidden;}
+  /* when the wine experiences section runs straight into the wine footer, a hairline keeps them apart */
+  .excursions + footer{ border-top:1px solid rgba(246,238,223,0.12); padding-top:64px; }
+  @media (max-width:640px){ .excursions + footer{ padding-top:48px; } }
   footer .rosette-field{ opacity:0.05; filter:invert(1); }
   .foot-grid{display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:50px; padding-bottom:56px; border-bottom:1px solid rgba(246,238,223,0.15); position:relative; z-index:1;}
   footer h2{font-size:var(--fs-h2); color:#fff; max-width:12ch;}
