@@ -476,4 +476,28 @@
     });
   });
 
+  /* ---------- villa sections: the sign swings, the leaves slide in ---------- */
+  // Each sign swings on its rope when it comes into view, then settles; each group
+  // of background leaves slides in from the sides when its part of the section
+  // arrives. Once each. With reduced motion (or no IntersectionObserver) it is all
+  // simply shown, still.
+  Array.prototype.forEach.call(document.querySelectorAll('.branch.has-sign'), function(sec){
+    var sign = sec.querySelector('.villa-sign');
+    var still = reduceMotion || !('IntersectionObserver' in window);
+    function once(el, threshold, fn){
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){ if (en.isIntersecting) { fn(); io.disconnect(); } });
+      }, { threshold:threshold });
+      io.observe(el);
+    }
+    Array.prototype.forEach.call(sec.querySelectorAll('.leaf-zone'), function(zone){
+      if (still) zone.classList.add('zone-in');
+      else once(zone, 0.2, function(){ zone.classList.add('zone-in'); });
+    });
+    if (sign && !still) {
+      sign.classList.add('sign-ready');
+      once(sign, 0.6, function(){ sign.classList.add('swing'); });
+    }
+  });
+
 })();
