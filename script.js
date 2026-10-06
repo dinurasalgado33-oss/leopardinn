@@ -365,7 +365,10 @@
       }
       dots.forEach(function(d, j){
         d.addEventListener('click', function(){
-          track.scrollTo({ left: j * track.clientWidth, behavior: reduceMotion ? 'auto' : 'smooth' });
+          var x = j * track.clientWidth;
+          // older phones can't take scroll options; jump straight there instead
+          if ('scrollBehavior' in document.documentElement.style) track.scrollTo({ left: x, behavior: reduceMotion ? 'auto' : 'smooth' });
+          else track.scrollLeft = x;
         });
       });
       var queued = false;
