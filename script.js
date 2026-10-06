@@ -432,4 +432,48 @@
       }, { passive:true });
     });
   }
+  /* ---------- villa thumbnails: drag to scroll with a mouse ---------- */
+  // Touch screens swipe the row natively; this lets a mouse drag it too. A drag
+  // doesn't count as a click, so it won't open the lightbox (see `moved`).
+  Array.prototype.forEach.call(document.querySelectorAll('.villa-thumbs'), function(row){
+    var down = false, startX = 0, startLeft = 0;
+    // the arrows (computers only; hidden by CSS on touch screens)
+    var wrap = row.parentNode;
+    var prevBtn = wrap.querySelector('.thumbs-arrow.prev');
+    var nextBtn = wrap.querySelector('.thumbs-arrow.next');
+    if (prevBtn && nextBtn) {
+      var edges = function(){
+        prevBtn.disabled = row.scrollLeft <= 2;
+        nextBtn.disabled = row.scrollLeft + row.clientWidth >= row.scrollWidth - 2;
+      };
+      var nudge = function(d){
+        var x = d * row.clientWidth * 0.8;
+        if (!reduceMotion && 'scrollBehavior' in document.documentElement.style) row.scrollBy({ left:x, behavior:'smooth' });
+        else row.scrollLeft += x;
+      };
+      prevBtn.addEventListener('click', function(){ nudge(-1); });
+      nextBtn.addEventListener('click', function(){ nudge(1); });
+      row.addEventListener('scroll', edges, { passive:true });
+      window.addEventListener('resize', edges);
+      window.addEventListener('load', edges);
+      edges();
+    }
+    row.addEventListener('pointerdown', function(e){
+      if (e.pointerType !== 'mouse') return;
+      down = true; moved = 0;
+      startX = e.clientX; startLeft = row.scrollLeft;
+      row.classList.add('dragging');
+    });
+    window.addEventListener('pointermove', function(e){
+      if (!down) return;
+      moved = Math.abs(e.clientX - startX);
+      row.scrollLeft = startLeft - (e.clientX - startX);
+    });
+    window.addEventListener('pointerup', function(){
+      if (!down) return;
+      down = false;
+      row.classList.remove('dragging');
+    });
+  });
+
 })();

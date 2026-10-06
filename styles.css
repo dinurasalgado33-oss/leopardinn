@@ -455,8 +455,47 @@
      the text. The photos keep their size and overlap; the gap below them leaves room
      for the small photo that hangs off the bottom corner. */
   .branch-grid-stack{ display:block; max-width:760px; }
-  .branch-copy .branch-visual{ max-width:480px; margin:28px 0 72px; }
-  @media (max-width:900px){ .branch-copy .branch-visual{ margin:24px 0 48px; } }
+  .branch-media{ min-width:0; max-width:480px; margin:28px 0 0; }
+  .branch-media .branch-visual{ margin:0 0 64px; }  /* room for the small photo hanging off the corner */
+  @media (max-width:900px){ .branch-media{ margin-top:24px; } .branch-media .branch-visual{ margin-bottom:44px; } }
+  /* the villa's other photos: small, in a row you swipe (or drag with a mouse); tap one
+     to open it large. The faded right edge says there are more. No pinning, no arrows. */
+  .villa-thumbs{
+    display:flex; gap:10px; overflow-x:auto; overflow-y:hidden;
+    -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity; overscroll-behavior-x:contain;
+    scrollbar-width:none; padding-bottom:2px; cursor:grab;
+    -webkit-mask-image:linear-gradient(to right, #000 84%, transparent);
+    mask-image:linear-gradient(to right, #000 84%, transparent);
+  }
+  .villa-thumbs::-webkit-scrollbar{ display:none; }
+  .villa-thumbs.dragging{ cursor:grabbing; scroll-snap-type:none; }
+  .villa-thumbs:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; border-radius:12px; }
+  .villa-thumb{
+    flex:0 0 108px; width:108px; height:144px; max-width:none; object-fit:cover;
+    border-radius:12px; scroll-snap-align:start; cursor:zoom-in;
+    -webkit-user-drag:none; user-select:none; transition:opacity .25s var(--ease-hover);
+  }
+  @media (hover:hover){ .villa-thumb:hover{ opacity:0.85; } }
+  @media (max-width:640px){ .villa-thumb{ flex-basis:96px; width:96px; height:128px; } }
+  /* arrows at each end of the row, on computers only (touch screens just swipe);
+     each one hides when the row is already at that end */
+  .villa-thumbs-wrap{ position:relative; }
+  .thumbs-arrow{ display:none; }
+  @media (hover:hover) and (pointer:fine){
+    .thumbs-arrow{
+      position:absolute; top:50%; margin-top:-18px; z-index:1;
+      width:36px; height:36px; padding:0; border:0; border-radius:50%; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      color:var(--wine); background:var(--paper);
+      box-shadow:0 0 0 1px var(--line), 0 6px 16px -6px rgba(36,26,18,0.35);
+      transition:opacity .25s var(--ease-hover), transform .25s var(--ease-hover);
+    }
+    .thumbs-arrow svg{ width:16px; height:16px; }
+    .thumbs-arrow.prev{ left:8px; }
+    .thumbs-arrow.next{ right:8px; }
+    .thumbs-arrow:hover{ transform:scale(1.08); }
+    .thumbs-arrow:disabled{ opacity:0; pointer-events:none; }
+  }
   /* desktop: the title runs across the top, then the photos on the left with the
      text beside them, so the section uses the width instead of half of it */
   @media (min-width:901px){
@@ -468,7 +507,8 @@
     .branch-grid-stack .branch-copy > .branch-seal,
     .branch-grid-stack .branch-copy > .branch-tag,
     .branch-grid-stack .branch-copy > h3{ grid-column:1 / -1; justify-self:start; }
-    .branch-grid-stack .branch-copy .branch-visual{ width:100%; margin:28px 0 40px; order:0; }  /* photos first in both sections */
+    .branch-grid-stack .branch-copy .branch-media{ width:100%; margin:28px 0 0; }
+    .branch-grid-stack .branch-copy > .villa-more{ grid-column:1 / -1; }
   }
   .amenity-list{ list-style:none; padding:0; margin:26px 0 0; display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; }
   .amenity-list li{font-size:var(--fs-base); display:flex; align-items:center; gap:8px;}
@@ -1179,6 +1219,11 @@
   .divider.on-wine .rule.right{ background:linear-gradient(90deg, rgba(246,238,223,0.22), transparent); }
   .divider + section, .divider + footer{ border-top:1px solid var(--line); }
   .divider.on-wine + footer{ border-top-color:rgba(246,238,223,0.12); padding-top:64px; }
+  /* the "see the villa in full" link closes each villa section */
+  .villa-more{ margin-top:24px; }
+  .villa-link{ font-size:var(--fs-sm); font-weight:600; color:var(--wine); text-underline-offset:3px; }
+  .villa-link:hover{ color:var(--bark); }
+  @media (max-width:640px){ .villa-link{ display:inline-block; padding-block:14px; } }  /* 44px to tap */
   /* the galleries start with their heading, so give them room below the hairline */
   .divider + .strip{ padding-top:64px; }
   @media (min-width:901px){ .divider + .hscroll{ padding-top:0; } }  /* pinned gallery centres itself */
