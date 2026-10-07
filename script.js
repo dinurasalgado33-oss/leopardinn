@@ -185,7 +185,7 @@
   function openLb(i){
     lbIndex = (i + lbImages.length) % lbImages.length;
     lbImage.classList.remove('zoomed');
-    lbImage.src = lbImages[lbIndex].src;
+    lbImage.src = lbImages[lbIndex].getAttribute('data-full') || lbImages[lbIndex].src;
     lbImage.alt = lbImages[lbIndex].alt;
     lbCounter.textContent = (lbIndex + 1) + ' / ' + lbImages.length;
     lightbox.classList.add('open');
