@@ -508,6 +508,7 @@
     .branch-grid-stack .branch-copy > .branch-tag,
     .branch-grid-stack .branch-copy > .villa-sign,
     .branch-grid-stack .branch-copy > .branch-head,
+    .branch-grid-stack .branch-copy > h2,
     .branch-grid-stack .branch-copy > h3{ grid-column:1 / -1; justify-self:start; }
     .branch-grid-stack .branch-copy .branch-media{ width:100%; margin:28px 0 0; }
     .branch-grid-stack .branch-copy > .villa-more{ grid-column:1 / -1; }
