@@ -284,9 +284,8 @@
   var enquirePhoto = document.querySelector('.enquire-photo');
   var shownVilla = null;
   function villaTint(branch){
-    var btn = document.querySelector('.trip-reserve[data-enquire-branch="' + branch + '"]');
-    var card = btn && btn.closest('.trip-card');
-    var img = card && card.querySelector('.trip-img');
+    var sec = document.getElementById(branch === 'Arugam Bay' ? 'arugambay' : branch === 'Wilpattu' ? 'wilpattu' : '');
+    var img = sec && sec.querySelector('.vcard-img');
     return img ? img.getAttribute('data-tint') : null;
   }
   function showVilla(){
@@ -297,7 +296,9 @@
     enquirePhoto.querySelectorAll('img').forEach(function(img){
       img.classList.toggle('on', !tint || img.getAttribute('data-branch') === state.branch);
     });
-    enquireCard.style.setProperty('--tint', 'rgb(' + (tint || '89, 80, 54') + ')');
+    enquireCard.style.setProperty('--tint', 'rgb(' + (tint || '128, 113, 80') + ')');
+    var encSec = document.getElementById('enquire');
+    if (encSec) encSec.setAttribute('data-villa', state.branch === 'Arugam Bay' || state.branch === 'Wilpattu' ? state.branch : 'either');
   }
 
   document.getElementById('branchChips').addEventListener('click', function(e){
@@ -514,5 +515,124 @@
       btn.textContent = open ? 'Show less' : '+' + extra + ' more';
     });
   });
+
+  /* ---------- villa cards in the sections: sliding photos ---------- */
+  // Swiping is native scroll-snap; this keeps the dots and the card colour in step
+  // with the photo on screen, and runs the dots and the (computer-only) arrows.
+  Array.prototype.forEach.call(document.querySelectorAll('.vcard'), function(card){
+    var track = card.querySelector('.vcard-slides');
+    var slides = card.querySelectorAll('.vcard-img');
+    var dots = card.querySelectorAll('.vcard-dots button');
+    var prev = card.querySelector('.vcard-arrow.prev');
+    var next = card.querySelector('.vcard-arrow.next');
+    if (!track || !slides.length) return;
+    var current = -1;
+    var smoothOK = !reduceMotion && 'scrollBehavior' in document.documentElement.style;
+    function show(i){
+      if (i === current) return;
+      current = i;
+      dots.forEach(function(d, j){
+        d.classList.toggle('on', j === i);
+        if (j === i) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current');
+      });
+      var t = slides[i].getAttribute('data-tint');
+      if (t) card.style.setProperty('--tint', 'rgb(' + t + ')');
+      if (prev) prev.disabled = i === 0;
+      if (next) next.disabled = i === slides.length - 1;
+    }
+    function go(i){
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      var x = i * track.clientWidth;
+      if (smoothOK) track.scrollTo({ left:x, behavior:'smooth' }); else track.scrollLeft = x;
+    }
+    dots.forEach(function(d, j){ d.addEventListener('click', function(){ go(j); }); });
+    if (prev) prev.addEventListener('click', function(){ go(current - 1); });
+    if (next) next.addEventListener('click', function(){ go(current + 1); });
+    var queued = false;
+    track.addEventListener('scroll', function(){
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function(){
+        queued = false;
+        var i = Math.round(track.scrollLeft / (track.clientWidth || 1));
+        if (slides[i]) show(i);
+      });
+    }, { passive:true });
+    show(0);
+  });
+
+  /* ---------- experience cards: arrows for the sideways row (computers) ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll('.exp-row'), function(row){
+    var nav = row.parentNode.querySelector('.exp-nav');
+    if (!nav) return;
+    var prev = nav.querySelector('.prev'), next = nav.querySelector('.next');
+    function edges(){ prev.disabled = row.scrollLeft <= 2; next.disabled = row.scrollLeft + row.clientWidth >= row.scrollWidth - 2; }
+    function step(d){
+      var card = row.querySelector('.trip');
+      var x = d * (card ? card.offsetWidth + 24 : row.clientWidth * 0.8);
+      if (!reduceMotion && 'scrollBehavior' in document.documentElement.style) row.scrollBy({ left:x, behavior:'smooth' }); else row.scrollLeft += x;
+    }
+    prev.addEventListener('click', function(){ step(-1); });
+    next.addEventListener('click', function(){ step(1); });
+    row.addEventListener('scroll', edges, { passive:true });
+    window.addEventListener('resize', edges);
+    edges();
+  });
+
+  /* ---------- experience cards: filter by villa (designed dropdown) ---------- */
+  var expFilter = document.getElementById('expFilter');
+  if (expFilter) {
+    var fBtn = expFilter.querySelector('.exp-filter-btn');
+    var fMenu = expFilter.querySelector('.exp-filter-menu');
+    var fOpts = Array.prototype.slice.call(fMenu.querySelectorAll('[role="option"]'));
+    var fValue = document.getElementById('expFilterValue');
+    var fDot = fBtn.querySelector('.exp-opt-dot');
+    var active = 0;
+    function applyFilter(want){
+      Array.prototype.forEach.call(document.querySelectorAll('#excursions .trip'), function(card){
+        var b = card.querySelector('[data-enquire-branch]');
+        card.classList.toggle('is-filtered', !!want && (!b || b.getAttribute('data-enquire-branch') !== want));
+      });
+      var row = document.querySelector('#excursions .exp-row');
+      if (row) { row.scrollLeft = 0; row.dispatchEvent(new Event('scroll')); }
+    }
+    function setActive(i){
+      active = (i + fOpts.length) % fOpts.length;
+      fOpts.forEach(function(o, j){ o.classList.toggle('is-active', j === active); });
+      fMenu.setAttribute('aria-activedescendant', fOpts[active].id);
+    }
+    function open(){
+      fMenu.hidden = false;
+      fBtn.setAttribute('aria-expanded', 'true');
+      setActive(Math.max(0, fOpts.findIndex ? fOpts.findIndex(function(o){ return o.getAttribute('aria-selected') === 'true'; }) : 0));
+      requestAnimationFrame(function(){ fMenu.classList.add('is-open'); });
+      fMenu.focus();
+    }
+    function close(focusBtn){
+      fMenu.classList.remove('is-open');
+      fBtn.setAttribute('aria-expanded', 'false');
+      setTimeout(function(){ if (fBtn.getAttribute('aria-expanded') === 'false') fMenu.hidden = true; }, 220);
+      if (focusBtn) fBtn.focus();
+    }
+    function choose(i){
+      var o = fOpts[i];
+      fOpts.forEach(function(x){ x.setAttribute('aria-selected', x === o ? 'true' : 'false'); });
+      fValue.textContent = o.querySelector('.exp-opt-name').textContent;
+      fDot.className = o.querySelector('.exp-opt-dot').className;
+      applyFilter(o.getAttribute('data-value'));
+      close(true);
+    }
+    fBtn.addEventListener('click', function(){ if (fMenu.hidden) open(); else close(true); });
+    fBtn.addEventListener('keydown', function(e){ if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); open(); } });
+    fOpts.forEach(function(o, i){ o.addEventListener('click', function(){ choose(i); }); o.addEventListener('mousemove', function(){ setActive(i); }); });
+    fMenu.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowDown') { e.preventDefault(); setActive(active + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(active - 1); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(active); }
+      else if (e.key === 'Escape') { e.preventDefault(); close(true); }
+      else if (e.key === 'Tab') { close(false); }
+    });
+    document.addEventListener('click', function(e){ if (!fMenu.hidden && !expFilter.contains(e.target)) close(false); });
+  }
 
 })();

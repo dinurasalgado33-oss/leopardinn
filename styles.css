@@ -837,7 +837,7 @@
      photo's colour (script.js); "Not sure yet" shows both villas side by side.
      Only long-supported CSS, as with the villa cards. */
   .enquire-card{
-    --tint:rgb(112, 88, 60);
+    --tint:rgb(136, 110, 78);
     width:320px; max-width:100%; padding:26px 18px 18px;
     border:0; border-radius:38px;
     background-color:var(--tint); color:#fff;
@@ -1481,3 +1481,306 @@
   .branch-text > .am-heading-main{ margin-top:4px; }
   .branch-text > .am-heading-main + .amenity-list{ margin-top:12px; }
   @media (max-width:900px){ .branch.has-sign .branch-text > .am-heading-main{ order:-3; margin-top:24px; } .branch.has-sign .branch-text > .am-heading-main + .amenity-list{ margin-top:12px; } }
+
+  /* ---------- villa sections as one card (homepage, 2026-10-08) ----------
+     Like the villa cards at the top: the photos slide (all of them, with dots, and
+     arrows on computers) and the card takes each photo's colour. Desktop: photos on
+     the left, the title, "In the villa", activities and buttons on the right. Phones:
+     stacked. The sign hangs above the card; the leaves (and Arugam Bay's waves) sit in
+     the background around it. Only long-supported CSS. */
+  .vsec{ position:relative; max-width:1040px; margin:0 auto; }
+  .vsec > .villa-sign{ position:relative; z-index:2; margin:4px 0 24px; }
+  .vsec-leaves{ position:absolute; top:-40px; left:-140px; right:-140px; bottom:-70px; z-index:0; pointer-events:none; }
+  .vsec-leaves .leaf-a{ top:0; left:60px; width:210px; }
+  .vsec-leaves .leaf-b{ top:10px; left:auto; right:90px; width:300px; }
+  .vsec-leaves .leaf-c{ top:45%; right:20px; width:130px; }
+  .vsec-leaves .leaf-d{ bottom:0; right:110px; width:300px; }
+  .vsec > .vsec-sea{
+    position:absolute; z-index:0; left:-80px; right:-80px; bottom:-64px; height:110px;
+    overflow:hidden; pointer-events:none;
+    -webkit-mask-image:linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+    mask-image:linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+  }
+  .vsec > .vsec-sea .sea-back{ bottom:46px; }
+  .vsec > .vsec-sea .sea-front{ bottom:20px; }
+
+  .vcard{
+    --tint:rgb(60, 60, 40);
+    position:relative; z-index:1; display:flex; flex-direction:column;
+    border-radius:38px; overflow:hidden; color:#fff;
+    background-color:var(--tint);
+    -webkit-transform:translateZ(0); transform:translateZ(0); /* Safari: clip to the corners */
+    box-shadow:0 0 0 1px rgba(246,238,223,0.08), 0 28px 50px -28px rgba(36,26,18,0.55);
+    transition:background-color .6s var(--ease-out);
+  }
+  .vcard-photos{ position:relative; height:0; padding-bottom:100%; }
+  .vcard-slides{
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    display:flex; overflow-x:auto; overflow-y:hidden;
+    -webkit-overflow-scrolling:touch; scroll-snap-type:x mandatory; overscroll-behavior-x:contain;
+    scrollbar-width:none;
+  }
+  .vcard-slides::-webkit-scrollbar{ display:none; }
+  .vcard-slides:focus-visible{ outline:2px solid var(--gold); outline-offset:-6px; }
+  .vcard-img{
+    flex:0 0 100%; width:100%; height:100%; max-width:none; object-fit:cover;
+    scroll-snap-align:start; scroll-snap-stop:always; cursor:zoom-in;
+  }
+  /* the photo melts into the card's colour */
+  .vcard-fade{
+    position:absolute; left:0; right:0; bottom:0; height:32%; pointer-events:none;
+    background-color:var(--tint); transition:background-color .6s var(--ease-out);
+    -webkit-mask-image:linear-gradient(to bottom, transparent, #000); mask-image:linear-gradient(to bottom, transparent, #000);
+  }
+  .vcard-dots{ position:absolute; left:0; right:0; bottom:10px; z-index:2; display:flex; justify-content:center; flex-wrap:wrap; }
+  .vcard-dots button{
+    width:24px; height:24px; padding:0; margin:0 -6px; border:0; background:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; -webkit-appearance:none; appearance:none;
+  }
+  .vcard-dots button::before{ content:''; display:block; width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.45); transition:background-color .3s var(--ease-hover); }
+  .vcard-dots button.on::before{ background:#fff; }
+  .vcard-arrow{ display:none; }
+  @media (hover:hover) and (pointer:fine){
+    .vcard-arrow{
+      position:absolute; top:50%; margin-top:-20px; z-index:2; width:40px; height:40px; padding:0;
+      border:0; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;
+      color:var(--wine); background:rgba(251,246,236,0.92); box-shadow:0 6px 16px -6px rgba(36,26,18,0.45);
+      transition:opacity .25s var(--ease-hover), transform .25s var(--ease-hover);
+    }
+    .vcard-arrow svg{ width:16px; height:16px; }
+    .vcard-arrow.prev{ left:14px; }
+    .vcard-arrow.next{ right:14px; }
+    .vcard-arrow:hover{ transform:scale(1.08); }
+    .vcard-arrow:disabled{ opacity:0; pointer-events:none; }
+  }
+
+  .vcard-body{ position:relative; padding:20px 22px 26px; }
+  .vcard-title{ font-family:'Karla',sans-serif; font-weight:700; font-size:26px; line-height:1.15; letter-spacing:-0.01em; color:#fff; }
+  .vcard .am-heading{ color:rgba(251,246,236,0.78); }
+  .vcard .am-heading-main{ margin-top:18px; }
+  .vcard .amenity-list.am-compact{ grid-template-columns:repeat(2, minmax(0, 1fr)); margin-top:12px; }
+  .vcard .amenity-list li{ color:#fff; }
+  .vcard .am-icon{ color:rgba(255,255,255,0.9); opacity:1; }
+  .vcard .am-more{ color:#fff; }
+  .vcard .am-more:hover{ color:rgba(255,255,255,0.8); }
+  .vcard .villa-activities{ border-top-color:rgba(255,255,255,0.18); }
+  .vcard .am-soon{ color:rgba(255,255,255,0.75) !important; opacity:1; }
+  .vcard .branch-actions{ margin-top:24px; }
+  .vcard .branch-cta{ background:var(--paper); color:var(--ink); }
+  .vcard .branch-cta:hover{ box-shadow:0 10px 24px rgba(0,0,0,0.25); }
+  .vcard .villa-learn{ background:rgba(255,255,255,0.12); color:#fff; border-color:rgba(255,255,255,0.4); }
+  .vcard .villa-learn:hover{ background:rgba(255,255,255,0.22); border-color:#fff; }
+
+  @media (min-width:901px){
+    .vcard{ flex-direction:row; align-items:stretch; }
+    .vcard-photos{ flex:0 0 54%; height:auto; padding-bottom:0; min-height:600px; }
+    .vcard-fade{ top:0; bottom:0; left:auto; right:0; width:22%; height:auto;
+      -webkit-mask-image:linear-gradient(to right, transparent, #000); mask-image:linear-gradient(to right, transparent, #000); }
+    .vcard-body{ flex:1 1 auto; min-width:0; padding:44px 40px 40px 28px; display:flex; flex-direction:column; justify-content:center; }
+    .vcard-title{ font-size:30px; }
+  }
+  @media (max-width:640px){
+    .vsec-leaves{ left:-60px; right:-60px; }
+    .vsec-leaves .leaf-a{ left:20px; width:140px; }
+    .vsec-leaves .leaf-b{ right:30px; width:190px; }
+    .vsec-leaves .leaf-c{ right:0; width:86px; }
+    .vsec-leaves .leaf-d{ right:30px; width:200px; }
+    .vsec > .villa-sign{ width:224px; margin-bottom:20px; }
+    .vcard{ border-radius:30px; }
+    .vcard-body{ padding:16px 18px 22px; }
+    .vcard-title{ font-size:23px; }
+    .vsec > .vsec-sea{ left:-24px; right:-24px; height:84px; bottom:-50px; }
+  }
+  .vcard .am-more{ align-self:flex-start; }
+
+  /* "Beyond the villa": experience cards in the villa-card style (homepage, 2026-10-08) */
+  .exp-cards{ padding:80px 0; }
+  .exp-cards .section-head-compact{ text-align:center; margin:0 auto 40px; }
+  .exp-cards .trips-row{ max-width:800px; }
+  .exp-cards .trip-body{ margin-top:-60px; }
+  .exp-cards-more{ text-align:center; margin-top:48px; }
+  @media (max-width:640px){ .exp-cards{ padding:56px 0; } .exp-cards .section-head-compact{ margin-bottom:28px; } .exp-cards-more{ margin-top:32px; } }
+  /* on computers the experience cards are a row you scroll sideways, with arrows */
+  .exp-nav{ display:none; }
+  @media (min-width:641px){
+    .exp-cards .exp-row{
+      max-width:var(--max); flex-wrap:nowrap; justify-content:flex-start;
+      overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; overscroll-behavior-x:contain;
+      scrollbar-width:none; padding-top:8px; padding-bottom:48px; margin-bottom:-48px;
+    }
+    .exp-cards .exp-row::-webkit-scrollbar{ display:none; }
+    .exp-cards .exp-row .trip{ flex:0 0 320px; margin:0 24px 0 0; scroll-snap-align:start; }
+    .exp-nav{ display:flex; justify-content:flex-end; gap:10px; margin-top:-76px; margin-bottom:32px; }
+    .exp-arrow{
+      width:44px; height:44px; padding:0; border:1px solid var(--line); border-radius:50%; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; background:var(--paper); color:var(--wine);
+      transition:background-color .25s var(--ease-hover), opacity .25s var(--ease-hover);
+    }
+    .exp-arrow svg{ width:16px; height:16px; }
+    .exp-arrow:hover{ background:var(--sand); }
+    .exp-arrow:disabled{ opacity:.35; cursor:default; }
+  }
+  /* the villa filter beside "Beyond the villa" */
+  .visually-hidden{ position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  .exp-cards .exp-head{ display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:14px 20px; max-width:none; }
+  .exp-filter{ position:relative; z-index:5; }
+  .exp-filter-btn{
+    display:inline-flex; align-items:center; gap:10px; min-height:44px; padding:0 16px 0 14px;
+    border:1px solid rgba(61,15,22,0.28); border-radius:999px; background:var(--paper); cursor:pointer;
+    font-family:'Karla',sans-serif; font-size:var(--fs-sm); font-weight:700; color:var(--wine);
+    transition:border-color .25s var(--ease-hover), background-color .25s var(--ease-hover);
+  }
+  .exp-filter-btn:hover, .exp-filter-btn[aria-expanded="true"]{ border-color:var(--wine); background:#fff; }
+  .exp-filter-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .exp-filter-chev{ width:15px; height:15px; margin-left:2px; transition:transform .3s var(--ease-out); }
+  .exp-filter-btn[aria-expanded="true"] .exp-filter-chev{ transform:rotate(180deg); }
+  .exp-opt-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .dot-both{ background:linear-gradient(135deg, rgb(112,88,60) 50%, rgb(66,72,48) 50%); }
+  .dot-ab{ background:rgb(112,88,60); }
+  .dot-wp{ background:rgb(66,72,48); }
+  .exp-filter-menu{
+    position:absolute; top:calc(100% + 8px); left:50%; min-width:220px; margin:0 0 0 -110px; padding:6px;
+    list-style:none; border-radius:18px; background:var(--paper);
+    box-shadow:0 0 0 1px var(--line), 0 18px 40px -16px rgba(36,26,18,0.35);
+    opacity:0; -webkit-transform:translateY(-6px); transform:translateY(-6px);
+    transition:opacity .2s var(--ease-out), transform .25s var(--ease-out);
+  }
+  .exp-filter-menu.is-open{ opacity:1; -webkit-transform:none; transform:none; }
+  .exp-filter-menu:focus{ outline:none; }
+  .exp-filter-menu li{
+    display:flex; align-items:center; gap:10px; min-height:44px; padding:0 12px; border-radius:12px; cursor:pointer;
+    font-family:'Karla',sans-serif; font-size:var(--fs-sm); font-weight:600; color:var(--ink); text-align:left;
+    transition:background-color .15s var(--ease-hover);
+  }
+  .exp-filter-menu li:hover, .exp-filter-menu li.is-active{ background:var(--sand); }
+  .exp-filter-menu li[aria-selected="true"]{ color:var(--wine); font-weight:700; }
+  .exp-opt-name{ flex:1 1 auto; }
+  .exp-opt-count{ min-width:22px; height:22px; padding:0 7px; border-radius:999px; background:rgba(61,15,22,0.07); color:var(--bark); font-size:var(--fs-2xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; }
+  .exp-opt-check{ width:16px; height:16px; color:var(--wine); visibility:hidden; }
+  .exp-filter-menu li[aria-selected="true"] .exp-opt-check{ visibility:visible; }
+  @media (prefers-reduced-motion: reduce){ .exp-filter-menu{ transition:none; } }
+  .exp-cards .trip.is-filtered{ display:none; }
+  /* the villa filter sits with the arrows on computers; on phones (no arrows) it is centred */
+  .exp-nav{ display:flex; justify-content:center; align-items:center; gap:10px; margin:-12px auto 28px; }
+  .exp-nav .exp-arrow{ display:none; }
+  @media (min-width:641px){
+    .exp-nav{ justify-content:flex-end; margin-top:-76px; margin-bottom:32px; }
+    .exp-nav .exp-arrow{ display:flex; }
+    .exp-nav .exp-filter{ margin-right:6px; }
+    .exp-nav .exp-filter-menu{ left:auto; right:0; margin:0; }
+  }
+  /* phones: the filter sits on the same line as the title */
+  @media (max-width:640px){
+    .exp-cards .exp-head{ justify-content:space-between; text-align:left; margin-bottom:0; }
+    .exp-cards .exp-head h2{ font-size:26px; }
+    .exp-nav{ justify-content:flex-end; margin:-56px auto 24px; }
+    .exp-nav .exp-filter-btn{ min-height:40px; padding:0 12px; }
+    .exp-nav .exp-filter-menu{ left:auto; right:0; margin:0; }
+  }
+  @media (max-width:640px){
+    .exp-cards .exp-head h2{ font-size:23px; }
+    .exp-cards .exp-head .draw-line{ padding-bottom:8px; }
+    .exp-nav{ margin-top:-50px; }
+    .exp-nav .exp-filter-btn{ min-height:38px; padding:0 11px; gap:7px; font-size:var(--fs-xs); }
+  }
+  @media (max-width:360px){ .exp-cards .exp-head h2{ font-size:20px; } }
+  /* the arrows and filter sit above the title block, which overlaps them */
+  .exp-nav{ position:relative; z-index:6; }
+  @media (min-width:641px){ .exp-cards .exp-row{ scroll-padding:0 32px; } }
+  @media (max-width:640px){ .exp-nav{ margin-top:-40px; } }
+  @media (max-width:360px){ .exp-nav{ margin-top:-38px; } }
+  /* the WhatsApp card: "Contact us" in the villa cards' title style, and their corners */
+  .enquire-card{ border-radius:38px; }
+  .enquire-card h2.vcard-title{ margin-top:0; font-size:26px; }
+  .enquire-card .enquire-photo{ margin-top:16px; }
+  @media (min-width:900px){ .enquire-card{ border-radius:38px; } .enquire-card h2.vcard-title{ font-size:30px; } }
+  @media (max-width:640px){ .enquire-card{ border-radius:30px; } .enquire-card h2.vcard-title{ font-size:23px; } }
+  /* more branches framing the villa cards, so the space around them is filled */
+  .vsec-leaves{ top:-90px; bottom:-110px; }
+  .vsec-leaves .leaf-e{ top:38%; left:10px; width:120px; }
+  .vsec-leaves .leaf-e img{ -webkit-mask-image:linear-gradient(to right, transparent 0, #000 30%); mask-image:linear-gradient(to right, transparent 0, #000 30%); -webkit-transform:scaleX(-1); transform:scaleX(-1); }
+  .vsec-leaves .leaf-f{ bottom:20px; left:40px; width:230px; }
+  .vsec-leaves .leaf-f img{ -webkit-mask-image:linear-gradient(to top, transparent 0, #000 30%), linear-gradient(to right, transparent 0, #000 30%); mask-image:linear-gradient(to top, transparent 0, #000 30%), linear-gradient(to right, transparent 0, #000 30%); -webkit-mask-composite:source-in; mask-composite:intersect; }
+  .vsec-leaves .leaf-f > .frond-sway{ -webkit-transform:scaleY(-1); transform:scaleY(-1); }
+  .vsec-leaves .leaf-g{ top:-30px; left:38%; width:260px; }
+  .vsec-leaves .leaf-g img{ -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 34%), linear-gradient(to left, transparent 0, #000 16%); mask-image:linear-gradient(to bottom, transparent 0, #000 34%), linear-gradient(to left, transparent 0, #000 16%); -webkit-mask-composite:source-in; mask-composite:intersect; }
+  .vsec-leaves .leaf-h{ top:8%; right:-10px; width:110px; }
+  .vsec-leaves .leaf-h img{ -webkit-mask-image:linear-gradient(to left, transparent 0, #000 30%); mask-image:linear-gradient(to left, transparent 0, #000 30%); }
+  .vsec-leaves .leaf-i{ bottom:-10px; left:44%; width:200px; }
+  .vsec-leaves .leaf-i img{ -webkit-mask-image:linear-gradient(to top, transparent 0, #000 30%), linear-gradient(to right, transparent 0, #000 30%); mask-image:linear-gradient(to top, transparent 0, #000 30%), linear-gradient(to right, transparent 0, #000 30%); -webkit-mask-composite:source-in; mask-composite:intersect; }
+  .vsec-leaves .leaf-i > .frond-sway{ -webkit-transform:scaleY(-1); transform:scaleY(-1); }
+  .zone-in .leaf-e, .zone-in .leaf-f, .zone-in .leaf-g, .zone-in .leaf-h, .zone-in .leaf-i{ -webkit-transform:none; transform:none; }
+  .leaf-e, .leaf-f{ -webkit-transform:translate3d(-40%,0,0); transform:translate3d(-40%,0,0); }
+  .leaf-g{ -webkit-transform:translate3d(0,-30%,0); transform:translate3d(0,-30%,0); }
+  .leaf-h{ -webkit-transform:translate3d(40%,0,0); transform:translate3d(40%,0,0); }
+  .leaf-i{ -webkit-transform:translate3d(0,30%,0); transform:translate3d(0,30%,0); }
+  .zone-in .leaf-e{ transition-delay:.2s; } .zone-in .leaf-f{ transition-delay:.3s; } .zone-in .leaf-g{ transition-delay:.1s; } .zone-in .leaf-h{ transition-delay:.25s; } .zone-in .leaf-i{ transition-delay:.35s; }
+  .leaf-e .frond-sway img, .leaf-f .frond-sway img, .leaf-i .frond-sway img{ transform-origin:top left; }
+  .leaf-g .frond-sway img, .leaf-h .frond-sway img{ transform-origin:top right; }
+  .leaf-e .frond-sway img{ animation:frond-flex 10s ease-in-out infinite -2s; }
+  .leaf-f .frond-sway img{ animation:frond-flex 12s ease-in-out infinite -6s; }
+  .leaf-g .frond-sway img{ animation:frond-flex 11s ease-in-out infinite -4s; }
+  .leaf-h .frond-sway img{ animation:frond-flex 9s ease-in-out infinite -1s; }
+  .leaf-i .frond-sway img{ animation:frond-flex 13s ease-in-out infinite -8s; }
+  @media (max-width:640px){
+    .vsec-leaves{ top:-60px; bottom:-80px; }
+    .vsec-leaves .leaf-e{ left:0; width:70px; }
+    .vsec-leaves .leaf-f{ left:10px; width:140px; }
+    .vsec-leaves .leaf-g{ left:30%; width:160px; top:-20px; }
+    .vsec-leaves .leaf-h{ right:0; width:66px; }
+    .vsec-leaves .leaf-i{ left:40%; width:130px; }
+  }
+  @media (prefers-reduced-motion: reduce){ .leaf-e,.leaf-f,.leaf-g,.leaf-h,.leaf-i{ transition:none; } }
+  /* card titles in the hero headline font (Fraunces) */
+  .vcard-title, .trip-title, .enquire-card h2.vcard-title{ font-family:'Fraunces',serif; font-weight:500; letter-spacing:-0.015em; line-height:1.1; }
+  .vcard-title{ font-size:30px; }
+  .trip-title{ font-size:25px; }
+  @media (min-width:901px){ .vcard-title, .enquire-card h2.vcard-title{ font-size:34px; } }
+  @media (max-width:640px){ .vcard-title, .enquire-card h2.vcard-title{ font-size:26px; } .trip-title{ font-size:24px; } }
+  /* desktop: no blended strip between the photo and the text; the photo ends cleanly */
+  @media (min-width:901px){ .vcard-fade{ display:none; } }
+  /* no blended strip on phones either; and no photo arrows on phones (they swipe) */
+  .vcard-fade{ display:none; }
+  @media (max-width:900px){ .vcard-arrow{ display:none !important; } }
+
+  /* Contact us: the chosen villa's scenery in the background (Arugam Bay: teal leaves and
+     waves; Wilpattu: green leaves), crossfading as the villa changes. "Not sure yet" shows
+  both, lightly. Same artwork and sway as the villa sections. */
+  .enquire{ overflow:hidden; }
+  .enquire > .wrap{ position:relative; z-index:1; }
+  .enq-scene{ position:absolute; top:0; left:0; right:0; bottom:0; z-index:0; pointer-events:none; opacity:0; transition:opacity .8s var(--ease-out); }
+  .enquire[data-villa="Arugam Bay"] .enq-ab, .enquire[data-villa="Wilpattu"] .enq-wp{ opacity:1; }
+  .enquire[data-villa="either"] .enq-scene{ opacity:.5; }
+  .eleaf{ position:absolute; opacity:.6; }
+  .eleaf img{ display:block; width:100%; height:auto; max-width:none; }
+  .el-1{ top:-20px; left:-30px; width:240px; }
+  .el-1 img{ -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 30%), linear-gradient(to right, transparent 0, #000 34%); mask-image:linear-gradient(to bottom, transparent 0, #000 30%), linear-gradient(to right, transparent 0, #000 34%); -webkit-mask-composite:source-in; mask-composite:intersect; }
+  .el-2{ top:-20px; right:6%; width:320px; }
+  .el-2 img{ -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 34%), linear-gradient(to left, transparent 0, #000 16%); mask-image:linear-gradient(to bottom, transparent 0, #000 34%), linear-gradient(to left, transparent 0, #000 16%); -webkit-mask-composite:source-in; mask-composite:intersect; }
+  .el-3{ top:34%; right:-20px; width:130px; }
+  .el-3 img{ -webkit-mask-image:linear-gradient(to left, transparent 0, #000 30%); mask-image:linear-gradient(to left, transparent 0, #000 30%); }
+  .el-4{ bottom:-20px; right:4%; width:300px; }
+  .el-4 > .frond-sway{ -webkit-transform:scaleY(-1); transform:scaleY(-1); }
+  .el-4 img{ -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 34%), linear-gradient(to left, transparent 0, #000 16%); mask-image:linear-gradient(to bottom, transparent 0, #000 34%), linear-gradient(to left, transparent 0, #000 16%); -webkit-mask-composite:source-in; mask-composite:intersect; }
+  .el-5{ bottom:-20px; left:-10px; width:230px; }
+  .el-5 > .frond-sway{ -webkit-transform:scaleY(-1); transform:scaleY(-1); }
+  .el-5 img{ -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 30%), linear-gradient(to right, transparent 0, #000 30%); mask-image:linear-gradient(to bottom, transparent 0, #000 30%), linear-gradient(to right, transparent 0, #000 30%); -webkit-mask-composite:source-in; mask-composite:intersect; }
+  .el-6{ top:36%; left:-10px; width:120px; }
+  .el-6 img{ -webkit-mask-image:linear-gradient(to right, transparent 0, #000 30%); mask-image:linear-gradient(to right, transparent 0, #000 30%); -webkit-transform:scaleX(-1); transform:scaleX(-1); }
+  .el-1 .frond-sway img, .el-5 .frond-sway img, .el-6 .frond-sway img{ transform-origin:top left; }
+  .el-2 .frond-sway img, .el-3 .frond-sway img, .el-4 .frond-sway img{ transform-origin:top right; }
+  .el-1 .frond-sway img{ animation:frond-flex 9s ease-in-out infinite; }
+  .el-2 .frond-sway img{ animation:frond-flex 11s ease-in-out infinite -3s; }
+  .el-3 .frond-sway img{ animation:frond-flex 10s ease-in-out infinite -5s; }
+  .el-4 .frond-sway img{ animation:frond-flex 12s ease-in-out infinite -7s; }
+  .el-5 .frond-sway img{ animation:frond-flex 13s ease-in-out infinite -2s; }
+  .el-6 .frond-sway img{ animation:frond-flex 10s ease-in-out infinite -6s; }
+  .enq-sea{ position:absolute; left:0; right:0; bottom:0; height:110px; overflow:hidden;
+    -webkit-mask-image:linear-gradient(to right, transparent, #000 14%, #000 86%, transparent); mask-image:linear-gradient(to right, transparent, #000 14%, #000 86%, transparent); }
+  .enq-sea .sea-back{ bottom:46px; }
+  .enq-sea .sea-front{ bottom:20px; }
+  @media (max-width:640px){
+    .el-1{ width:150px; } .el-2{ width:190px; right:0; } .el-3{ width:76px; } .el-4{ width:190px; right:0; } .el-5{ width:150px; } .el-6{ width:70px; }
+    .enq-sea{ height:84px; }
+  }
+  @media (prefers-reduced-motion: reduce){ .enq-scene{ transition:none; } .enq-scene .frond-sway img, .enq-sea .sea-bob, .enq-sea .sea-band{ animation:none; } }
