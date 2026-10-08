@@ -1784,3 +1784,33 @@
     .enq-sea{ height:84px; }
   }
   @media (prefers-reduced-motion: reduce){ .enq-scene{ transition:none; } .enq-scene .frond-sway img, .enq-sea .sea-bob, .enq-sea .sea-band{ animation:none; } }
+
+  /* ---------- inner pages in the homepage card style (2026-10-08) ---------- */
+  /* light info card: "Finding the villa", "You don't organise anything" */
+  .info-sec{ padding:80px 0; }
+  .info-card{
+    --tint:rgb(128, 113, 80);
+    max-width:1040px; margin:0 auto; padding:44px 48px; border-radius:38px; color:#fff;
+    background-color:var(--tint);
+    box-shadow:0 0 0 1px rgba(246,238,223,0.08), 0 28px 50px -28px rgba(36,26,18,0.55);
+  }
+  .info-intro{ margin-top:12px; max-width:60ch; font-size:var(--fs-base); line-height:1.6; color:rgba(255,255,255,0.86); }
+  .info-list{ margin:24px 0 0; display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:22px 40px; }
+  .info-row dt{ font-size:var(--fs-xs); font-weight:700; letter-spacing:var(--tr-eyebrow); text-transform:uppercase; color:rgba(251,246,236,0.78); margin-bottom:6px; }
+  .info-row dd{ margin:0; font-size:var(--fs-base); line-height:1.6; color:#fff; }
+  .info-card .branch-actions{ margin-top:28px; }
+  .info-card .branch-cta{ background:var(--paper); color:var(--ink); }
+  .info-card .villa-learn{ background:rgba(255,255,255,0.12); color:#fff; border-color:rgba(255,255,255,0.4); }
+  @media (max-width:640px){ .info-sec{ padding:48px 0; } .info-card{ padding:26px 20px; border-radius:30px; } .info-list{ grid-template-columns:1fr; gap:18px; } }
+
+  /* experiences page: a big card per experience, then small cards */
+  .exp-page-sec{ padding:72px 0; }
+  .exp-page-sec.alt{ background:var(--sand); }
+  .exp-page-sec .section-head-compact{ text-align:center; margin:0 auto 36px; }
+  .vcard-exp{ max-width:1040px; margin:0 auto; }
+  .vcard-desc{ margin-top:12px; font-size:var(--fs-base); line-height:1.6; color:rgba(255,255,255,0.88); }
+  .vcard .vcard-includes{ margin-top:16px; }
+  .vcard .vcard-includes li::before{ background:rgba(255,255,255,0.85); }
+  .exp-page-row{ margin-top:40px; }
+  .exp-page-row .trip-reserve{ display:flex; align-items:center; justify-content:center; text-decoration:none; }
+  @media (max-width:640px){ .exp-page-sec{ padding:48px 0; } .exp-page-row{ margin-top:28px; } }
