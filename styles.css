@@ -1389,3 +1389,95 @@
     .leaf{ transition:none; }
     .leaf-zone .frond-sway, .leaf-zone .frond-sway img, .villa-sign.swing img, .branch-text .sea-bob, .branch-text .sea-band{ animation:none; }
   }
+
+  /* ---------- villa features with icons, and the desktop layout (homepage, 2026-10-08) ----------
+     The features come from the Booking.com listings. Each has a small line icon in wine
+     instead of the dot. On desktop the photo row moves to the right column under the
+     Enquire button and the text starts at the top: the photos span both right-hand rows,
+     and the photo row's row is the flexible one, so any spare height goes below it and
+     the text stays tight. On phones the photo row stays right under the photos. */
+  .amenity-list.has-icons{ gap:12px 24px; }
+  .amenity-list.has-icons li{ align-items:flex-start; gap:10px; line-height:1.4; }
+  .amenity-list.has-icons li::before{ display:none; }
+  .am-icon{ width:18px; height:18px; flex-shrink:0; margin-top:1px; color:var(--wine); }
+  @media (max-width:640px){ .amenity-list.has-icons{ gap:12px 14px; } .amenity-list.has-icons li{ font-size:var(--fs-sm); } .am-icon{ width:16px; height:16px; } }
+  @media (min-width:901px){
+    .branch.has-sign .branch-grid-stack .branch-copy{
+      grid-template-areas:"head head" "visual text" "visual thumbs" "more more";
+      grid-template-rows:auto auto 1fr auto;
+      align-items:start;
+    }
+    .branch.has-sign .branch-copy > .branch-head{ grid-area:head; }
+    .branch.has-sign .branch-media{ display:contents; }
+    .branch.has-sign .branch-media .branch-visual{ grid-area:visual; margin:28px 0 40px; }
+    .branch.has-sign .branch-copy > .branch-text{ grid-area:text; margin-top:28px; }
+    .branch.has-sign .branch-media .villa-thumbs-wrap{ grid-area:thumbs; margin-top:36px; }
+    .branch.has-sign .branch-copy > .villa-more{ grid-area:more; }
+  }
+
+  /* the WhatsApp card, a size up on desktop (2026-10-08) */
+  @media (min-width:900px){
+    .enquire-card{ max-width:1040px; padding:48px; gap:56px; border-radius:44px; }
+    .enquire-card h2{ font-size:34px; }
+    .enquire-card .eyebrow{ font-size:var(--fs-sm); }
+    .enquire-card .enquire-intro > p{ font-size:var(--fs-lg); }
+    .enquire-photo{ min-height:320px; border-radius:26px; }
+    .enquire-card .field label{ font-size:var(--fs-sm); margin-bottom:10px; }
+    .enquire-card .field-row{ gap:16px; margin-top:22px; }
+    .enquire-card .chip{ padding:11px 18px; font-size:var(--fs-base); }
+    .enquire-card .date-pill{ min-height:50px; font-size:var(--fs-base); }
+    .enquire-card .stepper button{ width:46px; height:46px; }
+    .enquire-card .stepper .count{ font-size:28px; }
+    .enquire-card .enquire-preview{ margin-top:22px; padding:18px 20px; font-size:var(--fs-base); }
+    .enquire-card .enquire-send{ height:56px; font-size:var(--fs-md); margin-top:20px; }
+  }
+
+  /* compact feature lists (homepage, 2026-10-08): short labels, small type, three columns on
+     desktop; 8 show and the rest wait behind "+8 more" (script.js; without it all 16 show).
+     On phones the features sit between the photo gallery and the paragraph. */
+  .amenity-list.am-compact{ grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px 16px; margin-top:20px; }
+  .amenity-list.am-compact li{ font-size:var(--fs-sm); align-items:center; gap:8px; line-height:1.3; }
+  .amenity-list.am-compact .am-icon{ width:16px; height:16px; margin-top:0; opacity:.85; }
+  .amenity-list.am-compact.is-collapsed li:nth-child(n+9){ display:none; }
+  .am-more{
+    display:block; margin-top:12px; padding:6px 0; border:0; background:none; cursor:pointer;
+    font-family:'Karla',sans-serif; font-size:var(--fs-sm); font-weight:700; color:var(--wine);
+    text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px;
+  }
+  .am-more:hover{ color:var(--bark); }
+  .branch-text .am-more + .branch-cta{ margin-top:20px; }
+  @media (max-width:900px){
+    .amenity-list.am-compact{ grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px 14px; }
+    /* phones: features first, then the paragraph and the button */
+    .branch.has-sign .branch-text{ display:flex; flex-direction:column; align-items:flex-start; }
+    .branch.has-sign .branch-text > .amenity-list{ order:-2; margin-top:24px; width:100%; }
+    .branch.has-sign .branch-text > .am-more{ order:-1; }
+    .branch.has-sign .branch-text > p{ margin-top:20px; }
+  }
+  @media (max-width:640px){ .am-more{ padding:12px 0; margin-top:4px; } }  /* 44px to tap */
+
+  /* villa sections: Enquire with a small "Learn more" button beside it (homepage, 2026-10-08) */
+  .branch-actions{ display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:24px; }
+  .branch-actions .branch-cta{ margin-top:0; }
+  .villa-learn{
+    display:inline-flex; align-items:center; min-height:40px; padding:0 18px;
+    border:1px solid rgba(61,15,22,0.28); border-radius:999px; background:var(--paper);
+    font-size:var(--fs-sm); font-weight:700; color:var(--wine); text-decoration:none;
+    transition:background-color .25s var(--ease-hover), border-color .25s var(--ease-hover), transform .25s var(--ease-hover);
+  }
+  .villa-learn:hover{ background:var(--sand); border-color:var(--wine); transform:translateY(-2px); }
+  @media (max-width:640px){ .villa-learn{ min-height:44px; } }  /* 44px to tap */
+
+  /* Wilpattu activities, under the features (homepage, 2026-10-08) */
+  .villa-activities{ margin-top:22px; padding-top:18px; border-top:1px solid var(--line); width:100%; }
+  .am-heading{ font-family:'Karla',sans-serif; font-size:var(--fs-xs); font-weight:700; letter-spacing:var(--tr-eyebrow); text-transform:uppercase; color:var(--gold); }
+  .villa-activities .amenity-list{ margin-top:12px; }
+  @media (max-width:900px){ .branch.has-sign .branch-text > .villa-activities{ order:-1; } }
+  .am-soon{ margin-top:10px !important; font-size:var(--fs-xs) !important; font-style:italic; color:var(--bark) !important; opacity:.7; }
+  /* the villa cards carry their activities as capsules, wrapping onto rows */
+  .trip-tags{ row-gap:7px; }
+  .trip-tag{ margin-bottom:0; }
+  /* "In the villa" heading over the features, in the same style as "Activities" */
+  .branch-text > .am-heading-main{ margin-top:4px; }
+  .branch-text > .am-heading-main + .amenity-list{ margin-top:12px; }
+  @media (max-width:900px){ .branch.has-sign .branch-text > .am-heading-main{ order:-3; margin-top:24px; } .branch.has-sign .branch-text > .am-heading-main + .amenity-list{ margin-top:12px; } }

@@ -500,4 +500,19 @@
     }
   });
 
+  /* ---------- villa features: show 8, "+8 more" for the rest ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll('.am-more'), function(btn){
+    var list = document.getElementById(btn.getAttribute('aria-controls'));
+    var extra = list ? list.querySelectorAll('li').length - 8 : 0;
+    if (extra <= 0) return;
+    list.classList.add('is-collapsed');
+    btn.textContent = '+' + extra + ' more';
+    btn.hidden = false;
+    btn.addEventListener('click', function(){
+      var open = list.classList.toggle('is-collapsed') === false;
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.textContent = open ? 'Show less' : '+' + extra + ' more';
+    });
+  });
+
 })();
