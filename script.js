@@ -496,10 +496,27 @@
       else once(zone, 0.2, function(){ zone.classList.add('zone-in'); });
     });
     if (sign && !still) {
+      var signImg = sign.querySelector('img');
       sign.classList.add('sign-ready');
-      once(sign, 0.6, function(){ sign.classList.add('swing'); });
+      // the sign picture loads lazily, so it swings once it's there, not before
+      once(sign, 0.6, function(){
+        if (!signImg || signImg.complete) sign.classList.add('swing');
+        else signImg.addEventListener('load', function(){ sign.classList.add('swing'); });
+      });
     }
   });
+
+  /* ---------- background motion holds still off screen ---------- */
+  // The leaves, waves and signs only move while they can be seen; a phone that
+  // animated all of them at once, everywhere on the page, lagged when scrolling.
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var motionIo = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ en.target.classList.toggle('motion-off', !en.isIntersecting); });
+    }, { rootMargin:'200px 0px' });
+    Array.prototype.forEach.call(document.querySelectorAll('.leaf-zone, .enq-scene, .sea, .villa-sign'), function(el){
+      motionIo.observe(el);
+    });
+  }
 
   /* ---------- villa features: show 8, "+8 more" for the rest ---------- */
   Array.prototype.forEach.call(document.querySelectorAll('.am-more'), function(btn){

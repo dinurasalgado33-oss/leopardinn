@@ -1264,7 +1264,10 @@
     -webkit-filter:drop-shadow(0 12px 14px rgba(36,26,18,0.22)); filter:drop-shadow(0 12px 14px rgba(36,26,18,0.22));
   }
   .villa-sign.sign-ready img{ -webkit-transform:rotate(15deg); transform:rotate(15deg); }
-  .villa-sign.swing img{ animation:sign-swing 4.2s ease-in-out both, sign-breeze 9s ease-in-out 4.2s infinite; }
+  /* the swing plays on the picture, the breeze on the sign around it (same pivot, the nail).
+     Both on the one picture can't run on the graphics chip, and kept the page redrawing. */
+  .villa-sign.swing{ transform-origin:48.7% 0; animation:sign-breeze 9s ease-in-out 4.2s infinite; }
+  .villa-sign.swing img{ animation:sign-swing 4.2s ease-in-out both; }
   /* a pendulum losing energy: each swing smaller, every turn eased */
   @keyframes sign-swing{
     0%  { transform:rotate(15deg); }
@@ -1361,8 +1364,8 @@
     background-repeat:repeat-x; background-size:300px 50px;
     will-change:transform;
   }
-  .sea-back  .sea-band{ background-image:url('images/theme/ab-wave-a.png'); animation:sea-drift-right 38s linear infinite; }
-  .sea-front .sea-band{ background-image:url('images/theme/ab-wave-b.png'); background-position:150px 0; animation:sea-drift-left 26s linear infinite; }
+  .sea-back  .sea-band{ background-image:url('images/theme/ab-wave-a-lite.png'); animation:sea-drift-right 38s linear infinite; }
+  .sea-front .sea-band{ background-image:url('images/theme/ab-wave-b-lite.png'); background-position:150px 0; animation:sea-drift-left 26s linear infinite; }
   @keyframes sea-drift-left { from{ transform:translate3d(0,0,0); }      to{ transform:translate3d(-300px,0,0); } }
   @keyframes sea-drift-right{ from{ transform:translate3d(-300px,0,0); } to{ transform:translate3d(0,0,0); } }
   @keyframes sea-bob-back { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-5px); } }
@@ -1387,7 +1390,7 @@
   }
   @media (prefers-reduced-motion: reduce){
     .leaf{ transition:none; }
-    .leaf-zone .frond-sway, .leaf-zone .frond-sway img, .villa-sign.swing img, .branch-text .sea-bob, .branch-text .sea-band{ animation:none; }
+    .leaf-zone .frond-sway, .leaf-zone .frond-sway img, .villa-sign.swing, .villa-sign.swing img, .branch-text .sea-bob, .branch-text .sea-band{ animation:none; }
   }
 
   /* ---------- villa features with icons, and the desktop layout (homepage, 2026-10-08) ----------
@@ -1784,6 +1787,11 @@
     .enq-sea{ height:84px; }
   }
   @media (prefers-reduced-motion: reduce){ .enq-scene{ transition:none; } .enq-scene .frond-sway img, .enq-sea .sea-bob, .enq-sea .sea-band{ animation:none; } }
+
+  /* the leaves, waves and signs hold still while off screen (script.js adds .motion-off),
+     and so does the Contact us scenery that is faded out: only what can be seen moves */
+  .motion-off, .motion-off *,
+  .enquire[data-villa="Arugam Bay"] .enq-wp *, .enquire[data-villa="Wilpattu"] .enq-ab *{ animation-play-state:paused !important; }
 
   /* ---------- inner pages in the homepage card style (2026-10-08) ---------- */
   /* light info card: "Finding the villa", "You don't organise anything" */
